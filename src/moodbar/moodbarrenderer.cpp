@@ -21,6 +21,7 @@
 #include <QPalette>
 
 #include "core/arraysize.h"
+#include "core/logging.h"
 
 const int MoodbarRenderer::kNumHues = 12;
 
@@ -113,6 +114,7 @@ void MoodbarRenderer::Render(const ColorVector& colors, QPainter* p,
                              const QRect& rect) {
   // Sample the colors and map them to screen pixels.
   ColorVector screen_colors;
+  qLog(Debug) << "Render width" << rect.width();
   for (int x = 0; x < rect.width(); ++x) {
     int r = 0;
     int g = 0;

@@ -97,6 +97,7 @@ void MoodbarProxyStyle::SetMoodbarEnabled(bool enabled) {
 
 void MoodbarProxyStyle::NextState() {
   const bool visible = enabled_ && !data_.isEmpty();
+  qLog(Debug) << visible;
 
   // While the regular slider should stay at the standard size (Fixed),
   // moodbars should use all available space (MinimumExpanding).
@@ -248,9 +249,10 @@ void MoodbarProxyStyle::EnsureMoodbarRendered(const QStyleOptionSlider* opt) {
 }
 
 int MoodbarProxyStyle::GetExtraSpace(const QStyleOptionComplex* opt) const {
-  int space_available = slider_->style()->pixelMetric(
-      QStyle::PM_SliderSpaceAvailable, opt, slider_);
+  int space_available = slider_->width();
+  qLog(Debug) << "space_available " << space_available;
   int w = slider_->width();
+  qLog(Debug) << "w " << w;
   return w - space_available;
 }
 
@@ -279,8 +281,7 @@ QRect MoodbarProxyStyle::subControlRect(ComplexControl cc,
           const QStyleOptionSlider* slider_opt =
               qstyleoption_cast<const QStyleOptionSlider*>(opt);
 
-          int space_available = slider_->style()->pixelMetric(
-              QStyle::PM_SliderSpaceAvailable, opt, slider_);
+          int space_available = slider_->width();
           int w = slider_->width();
           int margin = (w - space_available) / 2;
           int x = 0;
@@ -330,16 +331,22 @@ QPixmap MoodbarProxyStyle::MoodbarPixmap(const ColorVector& colors,
                                          const QSize& size,
                                          const QPalette& palette,
                                          const QStyleOptionSlider* opt) {
+  qLog(Debug) << "size " << size.width() << "x" << size.height();
   int margin_leftright = GetExtraSpace(opt);
   const QRect rect(QPoint(0, 0), size);
   QRect border_rect(rect);
+  qLog(Debug) << "Border_rect " << border_rect.width() << "x" << border_rect.height();
   // I would expect we need to adjust by margin_lr/2, so the extra space is
   // distributed on both side, but if we do so, the margin is too small, and I'm
   // not sure why...
+  qLog(Debug) << "margin_lr " << margin_leftright;
+  qLog(Debug) << "kmarginsize " << kMarginSize;
   border_rect.adjust(margin_leftright, kMarginSize, -margin_leftright,
                      -kMarginSize);
+  qLog(Debug) << "Border_rect " << border_rect.width() << "x" << border_rect.height();
 
   QRect inner_rect(border_rect);
+  qLog(Debug) << "inner_rect " << inner_rect.width() << "x" << inner_rect.height();
   inner_rect.adjust(kBorderSize, kBorderSize, -kBorderSize, -kBorderSize);
 
   QPixmap ret(size);
